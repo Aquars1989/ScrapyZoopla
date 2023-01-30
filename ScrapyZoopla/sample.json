@@ -1,0 +1,1203 @@
+﻿{
+  "props": {
+    "pageProps": {
+      "data": {
+        "breadcrumbs": [
+          {
+            "__typename": "Breadcrumbs",
+            "label": "Zoopla",
+            "tracking": "home",
+            "uri": "/",
+            "noAppend": null,
+            "i18nLabelKey": null
+          },
+          {
+            "__typename": "Breadcrumbs",
+            "label": "House prices",
+            "tracking": "house prices",
+            "uri": "/house-prices/",
+            "noAppend": null,
+            "i18nLabelKey": null
+          },
+          {
+            "__typename": "Breadcrumbs",
+            "label": "Kent",
+            "tracking": "kent",
+            "uri": "/house-prices/kent/",
+            "noAppend": null,
+            "i18nLabelKey": null
+          },
+          {
+            "__typename": "Breadcrumbs",
+            "label": "Broadstairs",
+            "tracking": "broadstairs",
+            "uri": "/house-prices/broadstairs/",
+            "noAppend": null,
+            "i18nLabelKey": null
+          },
+          {
+            "__typename": "Breadcrumbs",
+            "label": "Lawn Road",
+            "tracking": "lawn road",
+            "uri": "/house-prices/broadstairs/lawn-road/",
+            "noAppend": null,
+            "i18nLabelKey": null
+          },
+          {
+            "__typename": "Breadcrumbs",
+            "label": "12 Lawn Road house prices",
+            "tracking": null,
+            "uri": null,
+            "noAppend": 1,
+            "i18nLabelKey": null
+          }
+        ],
+        "property": {
+          "__typename": "Property",
+          "uprn": "100061112662",
+          "address": {
+            "__typename": "Address",
+            "fullAddress": "12 Lawn Road, Broadstairs, CT10 1AA",
+            "postcode": "CT10 1AA",
+            "country": "England",
+            "outcode": "CT10",
+            "latitude": 51.360313,
+            "longitude": 1.4362887
+          },
+          "attributes": {
+            "__typename": "Attributes",
+            "bathrooms": 1,
+            "bedrooms": 3,
+            "floorAreaSqM": 136,
+            "livingRooms": 2,
+            "tenure": "Freehold",
+            "propertyType": "Detached Bungalow"
+          },
+          "history": {
+            "__typename": "History",
+            "historicListings": [
+              {
+                "__typename": "HistoricListing",
+                "attributes": {
+                  "__typename": "Attributes",
+                  "bathrooms": 2,
+                  "bedrooms": 4,
+                  "livingRooms": 2
+                },
+                "date": "2020-08-15",
+                "floorplans": [
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/u/240/180/803e7e79c2d55407294522770d6a6dbc14468aec.jpg",
+                    "medium": "https://lid.zoocdn.com/u/768/576/803e7e79c2d55407294522770d6a6dbc14468aec.jpg",
+                    "large": "https://lid.zoocdn.com/u/1024/768/803e7e79c2d55407294522770d6a6dbc14468aec.jpg"
+                  }
+                ],
+                "images": [
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/b0d08f30d4d1080d61cc4a72daeedcdbb7823c45.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/b0d08f30d4d1080d61cc4a72daeedcdbb7823c45.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/b0d08f30d4d1080d61cc4a72daeedcdbb7823c45.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/93f5dc58343a0d3e5a2cf5a99b2ec557fb9f65e4.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/93f5dc58343a0d3e5a2cf5a99b2ec557fb9f65e4.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/93f5dc58343a0d3e5a2cf5a99b2ec557fb9f65e4.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/702deed49fac08cd1f4cace22dc5cf1baefcc325.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/702deed49fac08cd1f4cace22dc5cf1baefcc325.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/702deed49fac08cd1f4cace22dc5cf1baefcc325.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/0bcfa4cb3ac1de1da80c4dcf9c279156ae1a5832.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/0bcfa4cb3ac1de1da80c4dcf9c279156ae1a5832.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/0bcfa4cb3ac1de1da80c4dcf9c279156ae1a5832.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/5aa99370936c48521815698fb694009f8e731223.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/5aa99370936c48521815698fb694009f8e731223.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/5aa99370936c48521815698fb694009f8e731223.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/8acd9f8f48e7faedc6991d06edc427abe5ec4182.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/8acd9f8f48e7faedc6991d06edc427abe5ec4182.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/8acd9f8f48e7faedc6991d06edc427abe5ec4182.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/efea3e47f9d7b8c591c70cc25bfdc66e2ccbef09.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/efea3e47f9d7b8c591c70cc25bfdc66e2ccbef09.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/efea3e47f9d7b8c591c70cc25bfdc66e2ccbef09.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/9bca11c2d984343de4912df954e854822e12bdd2.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/9bca11c2d984343de4912df954e854822e12bdd2.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/9bca11c2d984343de4912df954e854822e12bdd2.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/75d18184dde06cd61b34c056ba92502ed3edc04a.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/75d18184dde06cd61b34c056ba92502ed3edc04a.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/75d18184dde06cd61b34c056ba92502ed3edc04a.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/fcbbcf2336335ba189d7e7c11ce6b933b6c85700.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/fcbbcf2336335ba189d7e7c11ce6b933b6c85700.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/fcbbcf2336335ba189d7e7c11ce6b933b6c85700.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/64326043fb7efff85fe7a8d78b149c9cc2c42730.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/64326043fb7efff85fe7a8d78b149c9cc2c42730.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/64326043fb7efff85fe7a8d78b149c9cc2c42730.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/ed7932a0a7893b40de4f7ade0843a0379132fa81.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/ed7932a0a7893b40de4f7ade0843a0379132fa81.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/ed7932a0a7893b40de4f7ade0843a0379132fa81.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/695579c26ec439cff1aeb64015325a37ef59ad23.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/695579c26ec439cff1aeb64015325a37ef59ad23.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/695579c26ec439cff1aeb64015325a37ef59ad23.jpg"
+                  },
+                  {
+                    "__typename": "HistoricImage",
+                    "thumbnail": "https://lid.zoocdn.com/150/113/1235c3d3fbc277fcb69eaf3b5550f47c3c8190de.jpg",
+                    "medium": "https://lid.zoocdn.com/645/430/1235c3d3fbc277fcb69eaf3b5550f47c3c8190de.jpg",
+                    "large": "https://lid.zoocdn.com/1024/768/1235c3d3fbc277fcb69eaf3b5550f47c3c8190de.jpg"
+                  }
+                ],
+                "price": 560000,
+                "priceType": null,
+                "uri": "/property-history/12-lawn-road/broadstairs/ct10-1aa/55899327"
+              }
+            ],
+            "historicSales": [
+              {
+                "__typename": "HistoricSale",
+                "date": "2018-10-05",
+                "price": 400000,
+                "percentageChange": null,
+                "numericChange": null
+              }
+            ],
+            "soldPricesDataSource": "landRegistry"
+          },
+          "rentEstimate": {
+            "__typename": "RentEstimate",
+            "lowerPrice": 1650,
+            "currentPrice": 1900,
+            "upperPrice": 2150
+          },
+          "saleEstimate": {
+            "__typename": "SaleEstimate",
+            "lowerPrice": 595000,
+            "currentPrice": 627000,
+            "upperPrice": 658000,
+            "confidenceLevel": "HIGH",
+            "valueChange": {
+              "__typename": "ValueChange",
+              "numericChange": 227000,
+              "percentageChange": 56.75,
+              "saleDate": "2018-10-05"
+            },
+            "ingestedAt": "2022-12-13T16:00:58.170Z"
+          },
+          "liveListings": [
+            {
+              "__typename": "LiveListing",
+              "branchName": "Your Move - Broadstairs",
+              "transactionType": "sale",
+              "uri": "/for-sale/details/61544856/",
+              "listingId": "61544856",
+              "displayAddress": "Lawn Road, Broadstairs, Kent CT10",
+              "price": 700000,
+              "rentPerMonth": null,
+              "totalBedrooms": 6
+            }
+          ],
+          "pointsOfInterest": [
+            {
+              "__typename": "PointOfInterest",
+              "title": "Broadstairs",
+              "distanceMiles": 0.1,
+              "latitude": 51.360681,
+              "longitude": 1.43358,
+              "type": "national_rail_station",
+              "address": null
+            },
+            {
+              "__typename": "PointOfInterest",
+              "title": "St Mildred's Primary Infant School",
+              "distanceMiles": 0.2,
+              "latitude": 51.357876,
+              "longitude": 1.432935,
+              "type": "uk_school_primary",
+              "address": "St Mildred's Avenue"
+            },
+            {
+              "__typename": "PointOfInterest",
+              "title": "Haddon Dene School",
+              "distanceMiles": 0.3,
+              "latitude": 51.359175,
+              "longitude": 1.430647,
+              "type": "uk_school_primary",
+              "address": "57 Gladstone Road"
+            },
+            {
+              "__typename": "PointOfInterest",
+              "title": "Dumpton Park",
+              "distanceMiles": 1.1,
+              "latitude": 51.345705,
+              "longitude": 1.425838,
+              "type": "national_rail_station",
+              "address": null
+            }
+          ],
+          "similarProperties": [
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4358949,
+                "latitude": 51.3602346
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.435342,
+                "latitude": 51.3595672
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4368474,
+                "latitude": 51.3612501
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4380229,
+                "latitude": 51.3600642
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4379024,
+                "latitude": 51.3597979
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.434375,
+                "latitude": 51.3604681
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.434254,
+                "latitude": 51.3605796
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4342217,
+                "latitude": 51.3607245
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4384101,
+                "latitude": 51.3608346
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4350887,
+                "latitude": 51.3590619
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4384492,
+                "latitude": 51.3609058
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4387742,
+                "latitude": 51.360312
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4390101,
+                "latitude": 51.3600082
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4392794,
+                "latitude": 51.3603421
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4356771,
+                "latitude": 51.358478
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4334615,
+                "latitude": 51.3593975
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4330442,
+                "latitude": 51.3595807
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.432977,
+                "latitude": 51.3592588
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.432977,
+                "latitude": 51.3592588
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4341188,
+                "latitude": 51.3583888
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4403971,
+                "latitude": 51.3601114
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4342243,
+                "latitude": 51.3580708
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4376097,
+                "latitude": 51.3578096
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4370058,
+                "latitude": 51.3629815
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4340398,
+                "latitude": 51.3627088
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4323651,
+                "latitude": 51.3589529
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4347108,
+                "latitude": 51.3576608
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4347211,
+                "latitude": 51.3576065
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4318552,
+                "latitude": 51.3594356
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4406732,
+                "latitude": 51.3591948
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4391994,
+                "latitude": 51.3579338
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4342557,
+                "latitude": 51.3575302
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4354874,
+                "latitude": 51.3572872
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4316807,
+                "latitude": 51.3592159
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4377201,
+                "latitude": 51.3573656
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4355994,
+                "latitude": 51.3572479
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4316624,
+                "latitude": 51.3591624
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4329547,
+                "latitude": 51.3580001
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4407667,
+                "latitude": 51.3617826
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4316277,
+                "latitude": 51.3590825
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4332613,
+                "latitude": 51.3628665
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4413919,
+                "latitude": 51.3599652
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4379435,
+                "latitude": 51.357278
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4337683,
+                "latitude": 51.3631125
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4398441,
+                "latitude": 51.3627003
+              }
+            },
+            {
+              "__typename": "Property",
+              "address": {
+                "__typename": "Address",
+                "longitude": 1.4395894,
+                "latitude": 51.3577694
+              }
+            }
+          ],
+          "similarListings": [
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.3602,
+                  "longitude": 1.436801
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.361085,
+                  "longitude": 1.436681
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.361085,
+                  "longitude": 1.436681
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.3601,
+                  "longitude": 1.438
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.360057,
+                  "longitude": 1.437997
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.360244,
+                  "longitude": 1.438687
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359113,
+                  "longitude": 1.434608
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359088,
+                  "longitude": 1.434626
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359127,
+                  "longitude": 1.434106
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362238,
+                  "longitude": 1.436623
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362238,
+                  "longitude": 1.436623
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.358879,
+                  "longitude": 1.438748
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359287,
+                  "longitude": 1.439457
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359287,
+                  "longitude": 1.439457
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362035,
+                  "longitude": 1.438964
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362035,
+                  "longitude": 1.438964
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362688,
+                  "longitude": 1.43693
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362041,
+                  "longitude": 1.438982
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362042,
+                  "longitude": 1.43899
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.3589,
+                  "longitude": 1.433
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.358108,
+                  "longitude": 1.438742
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362739,
+                  "longitude": 1.434049
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.361225,
+                  "longitude": 1.431696
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359413,
+                  "longitude": 1.431354
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.357876,
+                  "longitude": 1.432935
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.360437,
+                  "longitude": 1.43114
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.360437,
+                  "longitude": 1.43114
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359352,
+                  "longitude": 1.431332
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.363113,
+                  "longitude": 1.433645
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359345,
+                  "longitude": 1.431306
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359425,
+                  "longitude": 1.441394
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.361888,
+                  "longitude": 1.440963
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362197,
+                  "longitude": 1.440674
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.356976,
+                  "longitude": 1.436283
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.357482,
+                  "longitude": 1.433189
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362003,
+                  "longitude": 1.431445
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.357467,
+                  "longitude": 1.433027
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.363787,
+                  "longitude": 1.437647
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.360395,
+                  "longitude": 1.442103
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359766,
+                  "longitude": 1.44207
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362083,
+                  "longitude": 1.431166
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.361595,
+                  "longitude": 1.430705
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359486,
+                  "longitude": 1.442135
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.359486,
+                  "longitude": 1.442135
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.3608,
+                  "longitude": 1.43026
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.360954,
+                  "longitude": 1.442375
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.358943,
+                  "longitude": 1.430374
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.3643,
+                  "longitude": 1.43483
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.363763,
+                  "longitude": 1.439829
+                }
+              }
+            },
+            {
+              "__typename": "Listing",
+              "location": {
+                "__typename": "ListingLocation",
+                "coordinates": {
+                  "__typename": "LocationCoordinates",
+                  "latitude": 51.362102,
+                  "longitude": 1.442212
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "__N_SSP": true
+  },
+  "page": "/property/[...property-with-address]",
+  "query": { "property-with-address": [ "uprn", "100061112662" ] },
+  "buildId": "4e2be2ebprod",
+  "assetPrefix": "https://cdn.prod.zoopla.co.uk",
+  "isFallback": false,
+  "gssp": true,
+  "scriptLoader": []
+}
