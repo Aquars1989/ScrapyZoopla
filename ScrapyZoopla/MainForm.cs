@@ -9,9 +9,13 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Runtime.CompilerServices;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ScrapyZoopla
 {
@@ -162,6 +166,9 @@ namespace ScrapyZoopla
             btnStopTask.Enabled = false;
             _StopTask = true;
         }
+
+        private CookieContainer _cookies = new CookieContainer();
+
         private async Task ScrapyData(SqlCommand cmd, string argsPostCode, int processRunID)
         {
             var htmlWeb = new HtmlWeb();
@@ -174,7 +181,14 @@ namespace ScrapyZoopla
                 string url = $"https://www.zoopla.co.uk/house-prices/{urlPostCode1}/?q={urlPostCode2}&search_source=house-prices&pn={page}";
 
                 Log($"Read data from url:{url}");
-                var doc = await htmlWeb.LoadFromWebAsync(url);
+
+              
+                string html=await Clearance.Get(url);
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+
+                //htmlWeb.UseCookies= true;
+                //var doc = await htmlWeb.LoadFromWebAsync(url);
                 var item = doc.DocumentNode.SelectNodes("//script[contains(@id, '__NEXT_DATA__')]");
 
                 string jsonStr = item[0].InnerText;
@@ -272,6 +286,7 @@ namespace ScrapyZoopla
 
                 gridDatas.CurrentCell = gridDatas.Rows[gridDatas.Rows.Count - 1].Cells[0];
 
+                List<Task> tasks = new List<Task>();
                 foreach (var queryItem in queryItems)
                 {
                     if (_StopTask) break;
@@ -283,38 +298,17 @@ namespace ScrapyZoopla
 
                         Log($"----- Collect further data {queryItem.Uprn} -----");
                         Log($"Read data from {queryItem.URL_Property}.");
-                        doc = await htmlWeb.LoadFromWebAsync(queryItem.URL_Property);
-                        item = doc.DocumentNode.SelectNodes("//script[contains(@id, '__NEXT_DATA__')]");
-                        jsonStr = item[0].InnerText;
-                        root = JsonConvert.DeserializeObject<JObject>(jsonStr);
-                        if (root == null) continue;
-
-                        int? size = null;
-                        JObject? attributes = root["props"]?["pageProps"]?["data"]?["property"]?["attributes"] as JObject;
-                        if (attributes != null && attributes.ContainsKey("floorAreaSqM") && int.TryParse(attributes["floorAreaSqM"]?.ToString(), out int val))
-                        {
-                            size = val;
-                        }
-
-
-                        queryItem.Size = size;
-                        JArray? array = root["props"]?["pageProps"]?["data"]?["property"]?["liveListings"] as JArray;
-                        if (array != null)
-                        {
-                            if (array.Count > 0)
-                            {
-                                queryItem.URL_Listing1 = array[0]["uri"]?.ToString();
-                                queryItem.ListingID1 = array[0]["listingId"]?.ToString();
-                            }
-                            if (array.Count > 1)
-                            {
-                                queryItem.URL_Listing2 = array[1]["uri"]?.ToString();
-                                queryItem.ListingID2 = array[1]["listingId"]?.ToString();
-                            }
-                        }
+                        tasks.Add(LoadFurtherData(queryItem));
                     }
+                }
+                await Task.WhenAll(tasks.ToArray());
 
-                    Log($"Write to database.");
+                foreach (var queryItem in queryItems)
+                {
+                    if (_StopTask) break;
+                    if (queryItem.Row == null) continue;
+
+                    Log($"Write {queryItem.Uprn} to database.");
                     queryItem.Row["Status"] = "Inserting";
                     cmd.CommandText = "EXEC[zest_Properties_Insert] " +
                                       "@p_URL_Property," +
@@ -357,11 +351,138 @@ namespace ScrapyZoopla
                     cmd.Parameters.AddWithValue("@p_ListingID1", (object?)(queryItem.ListingID1) ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@p_ListingID2", (object?)(queryItem.ListingID2) ?? DBNull.Value);
                     await cmd.ExecuteNonQueryAsync();
-
                     queryItem.Row["Status"] = "Finish";
                 }
+
+                //foreach (var queryItem in queryItems)
+                //{
+                //    if (_StopTask) break;
+                //    if (queryItem.Row == null) continue;
+
+                //    if (!string.IsNullOrWhiteSpace(queryItem.Uprn))
+                //    {
+                //        queryItem.Row["Status"] = "Loading";
+
+                //        Log($"----- Collect further data {queryItem.Uprn} -----");
+                //        Log($"Read data from {queryItem.URL_Property}.");
+
+                //        html = await Clearance.Get(queryItem.URL_Property);
+                //        doc.LoadHtml(html);
+                //        //doc = await htmlWeb.LoadFromWebAsync(queryItem.URL_Property);
+                //        item = doc.DocumentNode.SelectNodes("//script[contains(@id, '__NEXT_DATA__')]");
+                //        jsonStr = item[0].InnerText;
+                //        root = JsonConvert.DeserializeObject<JObject>(jsonStr);
+                //        if (root == null) continue;
+
+                //        int? size = null;
+                //        JObject? attributes = root["props"]?["pageProps"]?["data"]?["property"]?["attributes"] as JObject;
+                //        if (attributes != null && attributes.ContainsKey("floorAreaSqM") && int.TryParse(attributes["floorAreaSqM"]?.ToString(), out int val))
+                //        {
+                //            size = val;
+                //        }
+
+
+                //        queryItem.Size = size;
+                //        JArray? array = root["props"]?["pageProps"]?["data"]?["property"]?["liveListings"] as JArray;
+                //        if (array != null)
+                //        {
+                //            if (array.Count > 0)
+                //            {
+                //                queryItem.URL_Listing1 = array[0]["uri"]?.ToString();
+                //                queryItem.ListingID1 = array[0]["listingId"]?.ToString();
+                //            }
+                //            if (array.Count > 1)
+                //            {
+                //                queryItem.URL_Listing2 = array[1]["uri"]?.ToString();
+                //                queryItem.ListingID2 = array[1]["listingId"]?.ToString();
+                //            }
+                //        }
+                //    }
+
+                //    Log($"Write to database.");
+                //    queryItem.Row["Status"] = "Inserting";
+                //    cmd.CommandText = "EXEC[zest_Properties_Insert] " +
+                //                      "@p_URL_Property," +
+                //                      "@p_Address_1," +
+                //                      "@p_Address_2," +
+                //                      "@p_PostCode," +
+                //                      "@p_NumBeds," +
+                //                      "@p_NumBaths," +
+                //                      "@p_NumRec," +
+                //                      "@p_EstLow," +
+                //                      "@p_EstHigh," +
+                //                      "@p_LastSoldDate," +
+                //                      "@p_LastSoldPrice," +
+                //                      "@p_UPRN," +
+                //                      "@p_Zoopla_PropertyID," +
+                //                      "@p_zest_ProcessRunID," +
+                //                      "@p_Size," +
+                //                      "@p_URL_Listing1," +
+                //                      "@p_URL_Listing2," +
+                //                      "@p_ListingID1," +
+                //                      "@p_ListingID2";
+                //    cmd.Parameters.Clear();
+                //    cmd.Parameters.AddWithValue("@p_URL_Property", queryItem.URL_Property);
+                //    cmd.Parameters.AddWithValue("@p_Address_1", queryItem.Address_1);
+                //    cmd.Parameters.AddWithValue("@p_Address_2", queryItem.Address_2);
+                //    cmd.Parameters.AddWithValue("@p_PostCode", queryItem.PostCode);
+                //    cmd.Parameters.AddWithValue("@p_NumBeds", (object?)(queryItem.NumBeds) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_NumBaths", (object?)(queryItem.NumBaths) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_NumRec", (object?)(queryItem.NumRec) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_EstLow", (object?)(queryItem.EstLow) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_EstHigh", (object?)(queryItem.EstHigh) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_LastSoldDate", (object?)(queryItem.LastSoldDate) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_LastSoldPrice", (object?)(queryItem.LastSoldPrice) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_UPRN", (string.IsNullOrWhiteSpace(queryItem.Uprn) ? DBNull.Value : (object)queryItem.Uprn));
+                //    cmd.Parameters.AddWithValue("@p_Zoopla_PropertyID", queryItem.Zoopla_PropertyID);
+                //    cmd.Parameters.AddWithValue("@p_zest_ProcessRunID", queryItem.Zest_ProcessRunID);
+                //    cmd.Parameters.AddWithValue("@p_Size", (object?)(queryItem.Size) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_URL_Listing1", (object?)(queryItem.URL_Listing1) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_URL_Listing2", (object?)(queryItem.URL_Listing2) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_ListingID1", (object?)(queryItem.ListingID1) ?? DBNull.Value);
+                //    cmd.Parameters.AddWithValue("@p_ListingID2", (object?)(queryItem.ListingID2) ?? DBNull.Value);
+                //    await cmd.ExecuteNonQueryAsync();
+
+                //    queryItem.Row["Status"] = "Finish";
+                //}
                 page++;
             }
+        }
+
+        private async Task LoadFurtherData(QueryItem queryItem)
+        {
+                string html = await Clearance.Get(queryItem.URL_Property);
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+                //doc = await htmlWeb.LoadFromWebAsync(queryItem.URL_Property);
+                var item = doc.DocumentNode.SelectNodes("//script[contains(@id, '__NEXT_DATA__')]");
+                var jsonStr = item[0].InnerText;
+                var root = JsonConvert.DeserializeObject<JObject>(jsonStr);
+                if (root == null) return;
+
+                int? size = null;
+                JObject? attributes = root["props"]?["pageProps"]?["data"]?["property"]?["attributes"] as JObject;
+                if (attributes != null && attributes.ContainsKey("floorAreaSqM") && int.TryParse(attributes["floorAreaSqM"]?.ToString(), out int val))
+                {
+                    size = val;
+                }
+
+
+                queryItem.Size = size;
+                JArray? array = root["props"]?["pageProps"]?["data"]?["property"]?["liveListings"] as JArray;
+                if (array != null)
+                {
+                    if (array.Count > 0)
+                    {
+                        queryItem.URL_Listing1 = array[0]["uri"]?.ToString();
+                        queryItem.ListingID1 = array[0]["listingId"]?.ToString();
+                    }
+                    if (array.Count > 1)
+                    {
+                        queryItem.URL_Listing2 = array[1]["uri"]?.ToString();
+                        queryItem.ListingID2 = array[1]["listingId"]?.ToString();
+                    }
+                }
         }
 
         private async Task<int> zest_ProcessRuns_Insert(SqlCommand cmd)
@@ -370,6 +491,7 @@ namespace ScrapyZoopla
                               "EXEC[zest_ProcessRuns_Insert] @v_Now, NULL, 1 ,NULL;" +
                               "SET @v_zest_ProcessRunID = @@IDENTITY;";
             SqlParameter processRunID = new SqlParameter("@v_zest_ProcessRunID", SqlDbType.Int) { Direction = ParameterDirection.Output };
+            cmd.Parameters.Clear();
             cmd.Parameters.Add(processRunID);
             await cmd.ExecuteNonQueryAsync();
             return Convert.ToInt32(processRunID.Value);
@@ -380,6 +502,7 @@ namespace ScrapyZoopla
         {
             cmd.CommandText = "DECLARE @v_Now DATETIME = GETDATE();" +
                               $"EXEC[zest_ProcessRuns_Update] @v_zest_ProcessRunID, @v_Now, {status};";
+            cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@v_zest_ProcessRunID", rocessRunID);
             await cmd.ExecuteNonQueryAsync();
         }
@@ -393,7 +516,7 @@ namespace ScrapyZoopla
 
     public class QueryItem
     {
-        public string? URL_Property { get; set; }
+        public string URL_Property { get; set; } = "";
         public string? Uprn { get; set; }
         public string? Zoopla_PropertyID { get; set; }
         public string? Address_1 { get; set; }
