@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
@@ -63,6 +64,8 @@ namespace ScrapyZoopla
 
             _SqlConnectionString = File.ReadAllLines(_SqlConnectionStringPath)[0];
             _SqlConn = new SqlConnection(_SqlConnectionString);
+
+            LoadProcessList();
         }
 
         private void btnLoadPostCodes_Click(object sender, EventArgs e)
@@ -99,6 +102,7 @@ namespace ScrapyZoopla
             btnLoadPostCodes.Enabled = false;
             btnStopTask.Enabled = true;
             btnStartTask.Visible = false;
+            cboProcess.Enabled = false;
             btnStopTask.Visible = true;
             _StopTask = false;
             try
@@ -109,17 +113,39 @@ namespace ScrapyZoopla
                     _SqlConn.Open();
                 }
 
+                int? v_zest_ProcessRunID = null;
                 using (SqlCommand cmd = _SqlConn.CreateCommand())
                 {
-                    Log("Get ProcessRunID");
-                    int v_zest_ProcessRunID = await zest_ProcessRuns_Insert(cmd);
-
                     try
                     {
-                        Log($"ProcessRunID = {v_zest_ProcessRunID}");
-                        foreach (DataRow row in _PostCodes.Rows)
+                        int selectVal = Convert.ToInt32(cboProcess.SelectedValue ?? 0);
+                        DataRowView? item = cboProcess.SelectedItem as DataRowView;
+                        bool clearBeforeInsert = false;
+                        if (item == null || (int)item["zest_ProcessRunId"] == 0)
                         {
-                            row["Status"] = "";
+                            Log("Get ProcessRunID");
+                            v_zest_ProcessRunID = await zest_ProcessRuns_Insert(cmd);
+
+                            Log($"ProcessRunID = {v_zest_ProcessRunID}");
+                            foreach (DataRow row in _PostCodes.Rows)
+                            {
+                                row["Status"] = "";
+                            }
+                        }
+                        else
+                        {
+                            v_zest_ProcessRunID = selectVal;
+                            Log($"ProcessRunID = {v_zest_ProcessRunID}");
+                            clearBeforeInsert = true;
+                            bool setFinish = true;
+                            foreach (DataRow row in _PostCodes.Rows)
+                            {
+                                if (row["PostCode"].Equals(item["PostCode"]))
+                                {
+                                    setFinish = false;
+                                }
+                                row["Status"] = setFinish ? "Finish" : "";
+                            }
                         }
 
                         _Datas.Rows.Clear();
@@ -128,6 +154,7 @@ namespace ScrapyZoopla
                             DataRow row = _PostCodes.Rows[i];
 
                             if (_StopTask) break;
+                            if (row["Status"].Equals("Finish")) continue;
                             gridPostCodes.CurrentCell = gridPostCodes.Rows[i].Cells[0];
 
                             row["Status"] = "Processing";
@@ -135,15 +162,19 @@ namespace ScrapyZoopla
                             if (postCode == null) continue;
 
                             Log($"===== PostCode [{postCode}] =====");
-                            await ScrapyData(cmd, postCode, v_zest_ProcessRunID);
+                            await ScrapyData(cmd, postCode, v_zest_ProcessRunID.Value, clearBeforeInsert);
                             row["Status"] = "Finish";
+                            clearBeforeInsert = false;
                         }
-                        await zest_ProcessRuns_Update(cmd, v_zest_ProcessRunID, _StopTask ? "Abort" : "Success");
+                        await zest_ProcessRuns_Update(cmd, v_zest_ProcessRunID.Value, _StopTask ? "Abort" : "Success");
                         Log(_StopTask ? "*** Task aborted." : "Task finish.");
                     }
                     catch
                     {
-                        await zest_ProcessRuns_Update(cmd, v_zest_ProcessRunID, "Failure");
+                        if (v_zest_ProcessRunID != null)
+                        {
+                            await zest_ProcessRuns_Update(cmd, v_zest_ProcessRunID.Value, "Failure");
+                        }
                         throw;
                     }
 
@@ -157,7 +188,10 @@ namespace ScrapyZoopla
             {
                 btnLoadPostCodes.Enabled = true;
                 btnStartTask.Visible = true;
+                cboProcess.Enabled = true;
                 btnStopTask.Visible = false;
+
+                LoadProcessList();
                 _SqlConn.Close();
             }
         }
@@ -169,7 +203,7 @@ namespace ScrapyZoopla
 
         private CookieContainer _cookies = new CookieContainer();
 
-        private async Task ScrapyData(SqlCommand cmd, string argsPostCode, int processRunID)
+        private async Task ScrapyData(SqlCommand cmd, string argsPostCode, int processRunID,bool clearBeforeInsert)
         {
             var htmlWeb = new HtmlWeb();
             var urlPostCode1 = argsPostCode.Replace(" ", "-").ToLower();
@@ -182,8 +216,8 @@ namespace ScrapyZoopla
 
                 Log($"Read data from url:{url}");
 
-              
-                string html=await Clearance.Get(url);
+
+                string html = await Clearance.Get(url);
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(html);
 
@@ -217,7 +251,7 @@ namespace ScrapyZoopla
 
                     string address_1 = String.Join(",", addressParts.Take(addressParts.Length - 2)).Trim();
                     string address_2 = addressParts[addressParts.Length - 2].Trim();
-                    string postCode = addressParts[addressParts.Length - 1].Trim();
+                    string postCode = argsPostCode;// addressParts[addressParts.Length - 1].Trim();
 
                     int? beds = null, baths = null, recs = null, estLow = null, estHigh = null, lastSoldPrice = null;
                     int val;
@@ -307,6 +341,18 @@ namespace ScrapyZoopla
                 {
                     if (_StopTask) break;
                     if (queryItem.Row == null) continue;
+
+                    if (clearBeforeInsert)
+                    {
+                        clearBeforeInsert = false;
+                        cmd.CommandText = @"
+DELETE zest_Properties 
+WHERE zest_ProcessRunID=@p_zest_ProcessRunID AND PostCode = @p_PostCode";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@p_zest_ProcessRunID", queryItem.Zest_ProcessRunID);
+                        cmd.Parameters.AddWithValue("@p_PostCode", queryItem.PostCode);
+                        await cmd.ExecuteNonQueryAsync();
+                    }
 
                     Log($"Write {queryItem.Uprn} to database.");
                     queryItem.Row["Status"] = "Inserting";
@@ -451,38 +497,68 @@ namespace ScrapyZoopla
 
         private async Task LoadFurtherData(QueryItem queryItem)
         {
-                string html = await Clearance.Get(queryItem.URL_Property);
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(html);
-                //doc = await htmlWeb.LoadFromWebAsync(queryItem.URL_Property);
-                var item = doc.DocumentNode.SelectNodes("//script[contains(@id, '__NEXT_DATA__')]");
-                var jsonStr = item[0].InnerText;
-                var root = JsonConvert.DeserializeObject<JObject>(jsonStr);
-                if (root == null) return;
+            string html = await Clearance.Get(queryItem.URL_Property);
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(html);
+            //doc = await htmlWeb.LoadFromWebAsync(queryItem.URL_Property);
+            var item = doc.DocumentNode.SelectNodes("//script[contains(@id, '__NEXT_DATA__')]");
+            var jsonStr = item[0].InnerText;
+            var root = JsonConvert.DeserializeObject<JObject>(jsonStr);
+            if (root == null) return;
 
-                int? size = null;
-                JObject? attributes = root["props"]?["pageProps"]?["data"]?["property"]?["attributes"] as JObject;
-                if (attributes != null && attributes.ContainsKey("floorAreaSqM") && int.TryParse(attributes["floorAreaSqM"]?.ToString(), out int val))
+            int? size = null;
+            JObject? attributes = root["props"]?["pageProps"]?["data"]?["property"]?["attributes"] as JObject;
+            if (attributes != null && attributes.ContainsKey("floorAreaSqM") && int.TryParse(attributes["floorAreaSqM"]?.ToString(), out int val))
+            {
+                size = val;
+            }
+
+
+            queryItem.Size = size;
+            JArray? array = root["props"]?["pageProps"]?["data"]?["property"]?["liveListings"] as JArray;
+            if (array != null)
+            {
+                if (array.Count > 0)
                 {
-                    size = val;
+                    queryItem.URL_Listing1 = array[0]["uri"]?.ToString();
+                    queryItem.ListingID1 = array[0]["listingId"]?.ToString();
                 }
-
-
-                queryItem.Size = size;
-                JArray? array = root["props"]?["pageProps"]?["data"]?["property"]?["liveListings"] as JArray;
-                if (array != null)
+                if (array.Count > 1)
                 {
-                    if (array.Count > 0)
-                    {
-                        queryItem.URL_Listing1 = array[0]["uri"]?.ToString();
-                        queryItem.ListingID1 = array[0]["listingId"]?.ToString();
-                    }
-                    if (array.Count > 1)
-                    {
-                        queryItem.URL_Listing2 = array[1]["uri"]?.ToString();
-                        queryItem.ListingID2 = array[1]["listingId"]?.ToString();
-                    }
+                    queryItem.URL_Listing2 = array[1]["uri"]?.ToString();
+                    queryItem.ListingID2 = array[1]["listingId"]?.ToString();
                 }
+            }
+        }
+
+
+
+
+        private void LoadProcessList()
+        {
+            if (_SqlConn == null) return;
+
+            using (SqlCommand cmd = _SqlConn.CreateCommand())
+            using (SqlDataAdapter sa = new SqlDataAdapter(cmd))
+            {
+                cmd.CommandText = @"
+SELECT TOP 3 R.zest_ProcessRunID,MAX(R.StartDateTime) StartDateTime,MAX(P.PostCode) PostCode
+            ,'ID: '+FORMAT(R.zest_ProcessRunID,'N0')+' | '+FORMAT(MAX(R.StartDateTime),'yyyy/MM/dd HH:mm') Text
+FROM zest_ProcessRuns R
+INNER JOIN zest_Properties P ON R.zest_ProcessRunID = P.zest_ProcessRunID
+WHERE R.Status <> 'Success'
+GROUP BY R.zest_ProcessRunID
+ORDER BY R.zest_ProcessRunID DESC";
+
+                DataTable table = new DataTable();
+                sa.Fill(table);
+
+                DataRow row = table.NewRow();
+                row["zest_ProcessRunID"] = 0;
+                row["Text"] = "Create a new process";
+                table.Rows.InsertAt(row, 0);
+                cboProcess.DataSource = table;
+            }
         }
 
         private async Task<int> zest_ProcessRuns_Insert(SqlCommand cmd)
