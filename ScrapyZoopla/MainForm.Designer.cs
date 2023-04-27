@@ -47,6 +47,7 @@ namespace ScrapyZoopla
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btnStopTask = new System.Windows.Forms.Button();
             this.cboProcess = new System.Windows.Forms.ComboBox();
+            this.chkOnlyTopLevel = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridPostCodes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridDatas)).BeginInit();
             this.SuspendLayout();
@@ -102,12 +103,12 @@ namespace ScrapyZoopla
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.gridPostCodes.DefaultCellStyle = dataGridViewCellStyle2;
-            this.gridPostCodes.Location = new System.Drawing.Point(3, 65);
+            this.gridPostCodes.Location = new System.Drawing.Point(3, 87);
             this.gridPostCodes.Name = "gridPostCodes";
             this.gridPostCodes.ReadOnly = true;
             this.gridPostCodes.RowHeadersVisible = false;
             this.gridPostCodes.RowTemplate.Height = 25;
-            this.gridPostCodes.Size = new System.Drawing.Size(228, 422);
+            this.gridPostCodes.Size = new System.Drawing.Size(228, 400);
             this.gridPostCodes.TabIndex = 2;
             // 
             // gridPostCodes_PostCode
@@ -229,11 +230,22 @@ namespace ScrapyZoopla
             this.cboProcess.TabIndex = 6;
             this.cboProcess.ValueMember = "zest_ProcessRunID";
             // 
+            // chkOnlyTopLevel
+            // 
+            this.chkOnlyTopLevel.AutoSize = true;
+            this.chkOnlyTopLevel.Location = new System.Drawing.Point(127, 62);
+            this.chkOnlyTopLevel.Name = "chkOnlyTopLevel";
+            this.chkOnlyTopLevel.Size = new System.Drawing.Size(104, 19);
+            this.chkOnlyTopLevel.TabIndex = 7;
+            this.chkOnlyTopLevel.Text = "Only top level";
+            this.chkOnlyTopLevel.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1201, 493);
+            this.Controls.Add(this.chkOnlyTopLevel);
             this.Controls.Add(this.cboProcess);
             this.Controls.Add(this.btnStopTask);
             this.Controls.Add(this.gridDatas);
@@ -267,6 +279,7 @@ namespace ScrapyZoopla
         private System.Windows.Forms.DataGridViewTextBoxColumn gridDatas_Status;
         private System.Windows.Forms.Button btnStopTask;
         private ComboBox cboProcess;
+        private CheckBox chkOnlyTopLevel;
     }
 }
 

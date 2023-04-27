@@ -17,17 +17,21 @@ namespace ScrapyZoopla
         public static async Task<string> Get(string url)
         {
             string msg = "";
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 3; i++)
             {
                 try
                 {
                     var handler = new ClearanceHandler(FlareSolverrUrl)
                     {
-                        MaxTimeout = 60000
+                        MaxTimeout = 60000,
+                        ProxyUrl = "http://127.0.0.1:8888"
                     };
 
                     var client = new HttpClient(handler);
+                    client.DefaultRequestVersion = Version.Parse("2.0");
                     var content = await client.GetStringAsync(url);
+                    handler.Dispose();
+                    client.Dispose();
                     return content;
                 }
                 catch (Exception ex) { msg = ex.Message; }

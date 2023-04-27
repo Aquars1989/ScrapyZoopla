@@ -7,10 +7,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Diagnostics.Metrics;
+using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Security.Policy;
 using System.Text;
@@ -99,6 +102,7 @@ namespace ScrapyZoopla
         {
             if (_SqlConn == null) return;
 
+            chkOnlyTopLevel.Enabled = false;
             btnLoadPostCodes.Enabled = false;
             btnStopTask.Enabled = true;
             btnStartTask.Visible = false;
@@ -162,7 +166,7 @@ namespace ScrapyZoopla
                             if (postCode == null) continue;
 
                             Log($"===== PostCode [{postCode}] =====");
-                            await ScrapyData(cmd, postCode, v_zest_ProcessRunID.Value, clearBeforeInsert);
+                            await ScrapyData(cmd, postCode, v_zest_ProcessRunID.Value, clearBeforeInsert, chkOnlyTopLevel.Checked);
                             row["Status"] = "Finish";
                             clearBeforeInsert = false;
                         }
@@ -190,6 +194,7 @@ namespace ScrapyZoopla
                 btnStartTask.Visible = true;
                 cboProcess.Enabled = true;
                 btnStopTask.Visible = false;
+                chkOnlyTopLevel.Enabled = true;
 
                 LoadProcessList();
                 _SqlConn.Close();
@@ -203,41 +208,29 @@ namespace ScrapyZoopla
 
         private CookieContainer _cookies = new CookieContainer();
 
-        private async Task ScrapyData(SqlCommand cmd, string argsPostCode, int processRunID,bool clearBeforeInsert)
+        private async Task ScrapyData(SqlCommand cmd, string argsPostCode, int processRunID, bool clearBeforeInsert, bool topOnly)
         {
             var htmlWeb = new HtmlWeb();
-            var urlPostCode1 = argsPostCode.Replace(" ", "-").ToLower();
-            var urlPostCode2 = argsPostCode.Replace(" ", "%20");
-            int page = 1;
+            var urlPostCode = argsPostCode.Replace(" ", "-").ToLower();
+            int after = 0;
+            int first = 50;
             while (!_StopTask)
             {
                 List<QueryItem> queryItems = new List<QueryItem>();
-                string url = $"https://www.zoopla.co.uk/house-prices/{urlPostCode1}/?q={urlPostCode2}&search_source=house-prices&pn={page}";
-
-                Log($"Read data from url:{url}");
-
-
-                string html = await Clearance.Get(url);
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(html);
-
-                //htmlWeb.UseCookies= true;
-                //var doc = await htmlWeb.LoadFromWebAsync(url);
-                var item = doc.DocumentNode.SelectNodes("//script[contains(@id, '__NEXT_DATA__')]");
-
-                string jsonStr = item[0].InnerText;
+                Log($"Read post code:{urlPostCode}, record {after + 1}-{after + first}.");
+                string jsonStr = await GetTopData(urlPostCode, after, first);
                 JObject? root = JsonConvert.DeserializeObject<JObject>(jsonStr);
 
                 if (root == null || root.Count == 0) break;
-                JArray? edges = root["props"]?["pageProps"]?["data"]?["propertiesSearch"]?["edges"] as JArray;
+                JArray? edges = root["data"]?["propertiesSearch"]?["edges"] as JArray;
 
                 if (edges == null || edges.Count == 0)
                 {
-                    Log($"Read nothing from page {page}.");
+                    Log($"Read nothing.");
                     break;
                 }
 
-                Log($"Read {edges.Count:N0} data from page {page}.");
+                Log($"Read {edges.Count:N0} data.");
                 foreach (var edge in edges)
                 {
                     JObject? node = edge["node"] as JObject;
@@ -253,7 +246,7 @@ namespace ScrapyZoopla
                     string address_2 = addressParts[addressParts.Length - 2].Trim();
                     string postCode = argsPostCode;// addressParts[addressParts.Length - 1].Trim();
 
-                    int? beds = null, baths = null, recs = null, estLow = null, estHigh = null, lastSoldPrice = null;
+                    int? beds = null, baths = null, recs = null, size = null, estLow = null, estHigh = null, lastSoldPrice = null;
                     int val;
                     JObject? attributes = node["attributes"] as JObject;
                     JObject? saleEstimate = node["saleEstimate"] as JObject;
@@ -271,14 +264,19 @@ namespace ScrapyZoopla
                         baths = val;
                     }
 
-                    if (attributes != null && attributes.ContainsKey("bedrooms") && Int32.TryParse(attributes["bathrooms"]?.ToString(), out val))
+                    if (attributes != null && attributes.ContainsKey("bedrooms") && Int32.TryParse(attributes["bedrooms"]?.ToString(), out val))
                     {
                         beds = val;
                     }
 
-                    if (attributes != null && attributes.ContainsKey("livingRooms") && Int32.TryParse(attributes["bathrooms"]?.ToString(), out val))
+                    if (attributes != null && attributes.ContainsKey("livingRooms") && Int32.TryParse(attributes["livingRooms"]?.ToString(), out val))
                     {
                         recs = val;
+                    }
+
+                    if (attributes != null && attributes.ContainsKey("floorAreaSqM") && Int32.TryParse(attributes["floorAreaSqM"]?.ToString(), out val))
+                    {
+                        size = val;
                     }
 
                     if (saleEstimate != null && saleEstimate.ContainsKey("lowerPrice") && Int32.TryParse(saleEstimate["lowerPrice"]?.ToString(), out val))
@@ -307,6 +305,7 @@ namespace ScrapyZoopla
                         NumBeds = beds,
                         NumBaths = baths,
                         NumRec = recs,
+                        Size= size,
                         EstLow = estLow,
                         EstHigh = estHigh,
                         LastSoldDate = lastSoldDate,
@@ -320,22 +319,25 @@ namespace ScrapyZoopla
 
                 gridDatas.CurrentCell = gridDatas.Rows[gridDatas.Rows.Count - 1].Cells[0];
 
-                List<Task> tasks = new List<Task>();
-                foreach (var queryItem in queryItems)
+                if (!topOnly)
                 {
-                    if (_StopTask) break;
-                    if (queryItem.Row == null) continue;
-
-                    if (!string.IsNullOrWhiteSpace(queryItem.Uprn))
+                    List<Task> tasks = new List<Task>();
+                    foreach (var queryItem in queryItems)
                     {
-                        queryItem.Row["Status"] = "Loading";
+                        if (_StopTask) break;
+                        if (queryItem.Row == null) continue;
 
-                        Log($"----- Collect further data {queryItem.Uprn} -----");
-                        Log($"Read data from {queryItem.URL_Property}.");
-                        tasks.Add(LoadFurtherData(queryItem));
+                        if (!string.IsNullOrWhiteSpace(queryItem.Uprn))
+                        {
+                            queryItem.Row["Status"] = "Loading";
+
+                            Log($"----- Collect further data {queryItem.Uprn} -----");
+                            tasks.Add(GetLowData(queryItem));
+                            //tasks.Add(LoadFurtherData(queryItem));
+                        }
                     }
+                    await Task.WhenAll(tasks.ToArray());
                 }
-                await Task.WhenAll(tasks.ToArray());
 
                 foreach (var queryItem in queryItems)
                 {
@@ -491,13 +493,102 @@ WHERE zest_ProcessRunID=@p_zest_ProcessRunID AND PostCode = @p_PostCode";
 
                 //    queryItem.Row["Status"] = "Finish";
                 //}
-                page++;
+                after += first;
+            }
+        }
+
+        private async Task<string> GetTopData(string postcode, int after, int first)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                try
+                {
+                    var client = new HttpClient();
+                    var request = new HttpRequestMessage(HttpMethod.Post, "https://api-graphql-lambda.prod.zoopla.co.uk/graphql");
+                    request.Headers.Add("x-api-key", "3Vzj2wUfaP3euLsV4NV9h3UAVUR3BoWd5clv9Dvu");
+                    request.Headers.Add("Cookie", "ajs_anonymous_id=8c54211c0eaa482b8b5e204c83bdd135; zooplapsid=c6d89dc06d27c1abaa82c704f4eebc45");
+                    var content = new StringContent("{\"query\":\"query housePricesTrackedProperties($geoIdentifier: GeoIdentifier, $after: ID, $first: PositiveInt, $fromLastSaleDate: String, $propertyTypeCode: String, $sortDirection: String, $sortOrder: String, $toLastSaleDate: String) \\r\\n{  \\r\\n    propertiesSearch( after: $after first: $first input: {geoIdentifier: $geoIdentifier, fromLastSaleDate: $fromLastSaleDate, propertyTypeCode: $propertyTypeCode, sortDirection: $sortDirection, sortOrder: $sortOrder, toLastSaleDate: $toLastSaleDate}  ) {... on PropertiesSearchConnection {edges { node {uprn propertyId lastSale{ date price },address{ fullAddress},attributes{bathrooms bedrooms livingRooms floorAreaSqM},saleEstimate{lowerPrice upperPrice}}}}...PropertiesSearchResponseError}}fragment PropertiesSearchResponseError on PropertiesSearchResponseError {errors {message}}\",\"variables\":{\"geoIdentifier\":\"" + postcode + "\",\"after\":" + after + ",\"first\":" + first + ",\"sortOrder\":\"last_sale_date\",\"sortDirection\":\"desc\"}}", null, "application/json");
+                    request.Content = content;
+                    var response = await client.SendAsync(request);
+                    response.EnsureSuccessStatusCode();
+                    string jsonStr = await response.Content.ReadAsStringAsync();
+                    return jsonStr;
+                }
+                catch
+                {
+                    if (i == 0)
+                    {
+                        Log($"Read Postcode:{postcode} failed, retry:{i + 1}");
+                    }
+                    else if (i < 2)
+                    {
+                        Log($"Read Postcode:{postcode} failed, retry:{i + 1} , waiting 30 sec");
+                        await Task.Delay(30000);
+                    }
+                    else
+                    {
+                        Log($"Read Postcode:{postcode} failed");
+                        throw;
+                    }
+                }
+            }
+            throw new Exception("GetTopData failed.");
+        }
+
+        private async Task GetLowData(QueryItem queryItem)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                try
+                {
+                    var client = new HttpClient();
+                    var request = new HttpRequestMessage(HttpMethod.Post, "https://api-graphql-lambda.prod.zoopla.co.uk/graphql");
+                    request.Headers.Add("x-api-key", "3Vzj2wUfaP3euLsV4NV9h3UAVUR3BoWd5clv9Dvu");
+                    request.Headers.Add("Cookie", "ajs_anonymous_id=8c54211c0eaa482b8b5e204c83bdd135; zooplapsid=c6d89dc06d27c1abaa82c704f4eebc45");
+                    var content = new StringContent("{\"query\":\"query property($uprn: String) {property(uprn: $uprn) { liveListings { uri listingId } } }\",\"variables\":{\"uprn\":\"" + queryItem.Uprn + "\"}}", null, "application/json"); request.Content = content;
+                    var response = await client.SendAsync(request);
+                    response.EnsureSuccessStatusCode();
+                    Console.WriteLine(await response.Content.ReadAsStringAsync());
+
+                    string jsonStr = await response.Content.ReadAsStringAsync();
+                    JObject? root = JsonConvert.DeserializeObject<JObject>(jsonStr);
+                    if (root?["data"]?["property"]?["liveListings"] is JArray listing)
+                    {
+                        if (listing.Count > 0)
+                        {
+                            queryItem.URL_Listing1 = listing[0]["uri"]?.ToString();
+                            queryItem.ListingID1 = listing[0]["listingId"]?.ToString();
+                        }
+                        if (listing.Count > 1)
+                        {
+                            queryItem.URL_Listing2 = listing[1]["uri"]?.ToString();
+                            queryItem.ListingID2 = listing[1]["listingId"]?.ToString();
+                        }
+                    }
+                }
+                catch
+                {
+                    if (i == 0)
+                    {
+                        Log($"Read Uprn:{queryItem.Uprn} failed, retry:{i + 1}");
+                    }
+                    else if (i < 2)
+                    {
+                        Log($"Read Uprn:{queryItem.Uprn} failed, retry:{i + 1} , waiting 30 sec");
+                        await Task.Delay(30000);
+                    }
+                    else
+                    {
+                        Log($"Read Uprn:{queryItem.Uprn} failed");
+                        throw;
+                    }
+                }
             }
         }
 
         private async Task LoadFurtherData(QueryItem queryItem)
         {
-            string html = await Clearance.Get(queryItem.URL_Property);
+            string html = await Clearance.Get("https://www.zoopla.co.uk/property/uprn/10013309322/");// queryItem.URL_Property);
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
             //doc = await htmlWeb.LoadFromWebAsync(queryItem.URL_Property);
